@@ -129,7 +129,7 @@ class ImageMask(gr.components.ImageEditor):
     is_template = True
 
     def __init__(self, **kwargs):
-        super().__init__(source="upload", interactive=True, **kwargs)
+        super().__init__(sources=["upload"], interactive=True, **kwargs)
 
     def preprocess(self, x):
         return super().preprocess(x)
