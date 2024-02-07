@@ -3,7 +3,7 @@ name: Docker Build on EC2 Instance
 on:
   push:
     branches:
-      - feat/deploy
+      - feat/gradio_client
 
 jobs:
   build:
@@ -27,7 +27,7 @@ jobs:
 
             git clone https://github.com/OpenAdaptAI/SoM
             cd SoM
-            git checkout feat/deploy
+            git checkout feat/gradio_client
             git pull
 
             # Stop and remove existing container if it's running
