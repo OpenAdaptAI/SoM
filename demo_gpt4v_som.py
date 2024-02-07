@@ -173,10 +173,12 @@ def highlight(mode, alpha, label_mode, anno_mode, *args, **kwargs):
         sections.append((mask_i, r))
     return (history_images[0], sections)
 
-class ImageMask(gr.templates.Sketchpad):
+class ImageMask(gr.components.ImageEditor):
     """
     Sets: source="canvas", tool="sketch"
     """
+
+    is_template = True
 
     def __init__(self, **kwargs):
         super().__init__(sources=["upload"], interactive=True, **kwargs)
