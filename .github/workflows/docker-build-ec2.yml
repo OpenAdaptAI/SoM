@@ -5,7 +5,7 @@ name: Docker Build on EC2 Instance
 on:
   push:
     branches:
-      - main
+      - test/masks
 
 jobs:
   build:
@@ -18,7 +18,7 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           command_timeout: "60m"
-          host: 44.193.196.24
+          host: 34.200.234.187
           username: ubuntu  # Usually 'ubuntu' or 'ec2-user'
           
           key: ${{ secrets.SSH_PRIVATE_KEY }}
@@ -30,7 +30,7 @@ jobs:
             rm -rf SoM || true
             git clone https://github.com/OpenAdaptAI/SoM
             cd SoM
-            git checkout main
+            git checkout test/masks
             git pull
 
             # Stop and remove existing container if it's running
