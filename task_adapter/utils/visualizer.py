@@ -424,10 +424,10 @@ class Visualizer:
             colors = [
                 self._jitter([x / 255 for x in self.metadata.thing_colors[c]]) for c in classes
             ]
-            alpha = 0.4
+            alpha = 1
         else:
             colors = None
-            alpha = 0.4
+            alpha = 1
 
         if self._instance_mode == ColorMode.IMAGE_BW:
             self.output.reset_image(
@@ -437,7 +437,7 @@ class Visualizer:
                     else None
                 )
             )
-            alpha = 0.3
+            alpha = 1
         
         self.overlay_instances(
             masks=masks,
@@ -449,7 +449,7 @@ class Visualizer:
         )
         return self.output
 
-    def draw_sem_seg(self, sem_seg, area_threshold=None, alpha=0.7):
+    def draw_sem_seg(self, sem_seg, area_threshold=None, alpha=1):
         """
         Draw semantic segmentation predictions/labels.
 
@@ -485,7 +485,7 @@ class Visualizer:
             )
         return self.output
 
-    def draw_panoptic_seg(self, panoptic_seg, segments_info, area_threshold=None, alpha=0.7):
+    def draw_panoptic_seg(self, panoptic_seg, segments_info, area_threshold=None, alpha=1):
         """
         Draw panoptic prediction annotations or results.
 
@@ -605,7 +605,7 @@ class Visualizer:
                 sem_seg = Image.open(f)
                 sem_seg = np.asarray(sem_seg, dtype="uint8")
         if sem_seg is not None:
-            self.draw_sem_seg(sem_seg, area_threshold=0, alpha=0.4)
+            self.draw_sem_seg(sem_seg, area_threshold=0, alpha=1)
 
         pan_seg = dic.get("pan_seg", None)
         if pan_seg is None and "pan_seg_file_name" in dic:
@@ -618,7 +618,7 @@ class Visualizer:
         if pan_seg is not None:
             segments_info = dic["segments_info"]
             pan_seg = torch.tensor(pan_seg)
-            self.draw_panoptic_seg(pan_seg, segments_info, area_threshold=0, alpha=0.7)
+            self.draw_panoptic_seg(pan_seg, segments_info, area_threshold=0, alpha=1)
         return self.output
 
     def overlay_instances(
@@ -629,7 +629,7 @@ class Visualizer:
         masks=None,
         keypoints=None,
         assigned_colors=None,
-        alpha=0.5,
+        alpha=1,
     ):
         """
         Args:
@@ -916,7 +916,7 @@ class Visualizer:
             text,
             size=font_size * self.output.scale,
             family="sans-serif",
-            bbox={"facecolor": bbox_background, "alpha": 0.8, "pad": 0.7, "edgecolor": "none"},
+            bbox={"facecolor": bbox_background, "alpha": 1, "pad": 0.7, "edgecolor": "none"},
             verticalalignment="top",
             horizontalalignment=horizontal_alignment,
             color=color,
@@ -925,7 +925,7 @@ class Visualizer:
         )
         return self.output
 
-    def draw_box(self, box_coord, alpha=0.5, edge_color="g", line_style="-"):
+    def draw_box(self, box_coord, alpha=1, edge_color="g", line_style="-"):
         """
         Args:
             box_coord (tuple): a tuple containing x0, y0, x1, y1 coordinates, where x0 and y0
@@ -960,7 +960,7 @@ class Visualizer:
         return self.output
 
     def draw_rotated_box_with_label(
-        self, rotated_box, alpha=0.5, edge_color="g", line_style="-", label=None
+        self, rotated_box, alpha=1, edge_color="g", line_style="-", label=None
     ):
         """
         Draw a rotated box with label on its top-left corner.
@@ -1064,7 +1064,7 @@ class Visualizer:
         return self.output
 
     def draw_binary_mask(
-        self, binary_mask, color=None, *, edge_color=None, text=None, alpha=0.7, area_threshold=10
+        self, binary_mask, color=None, *, edge_color=None, text=None, alpha=1, area_threshold=10
     ):
         """
         Args:
@@ -1115,7 +1115,7 @@ class Visualizer:
         return self.output
     
     def draw_binary_mask_with_number(
-        self, binary_mask, color=None, *, edge_color=None, text=None, label_mode='1', alpha=0.1, anno_mode=['Mask'], area_threshold=10
+        self, binary_mask, color=None, *, edge_color=None, text=None, label_mode='1', alpha=1, anno_mode=['Mask'], area_threshold=10
     ):
         """
         Args:
@@ -1164,7 +1164,7 @@ class Visualizer:
                 self.output.ax.imshow(rgba, extent=(0, self.output.width, self.output.height, 0))
 
         if 'Box' in anno_mode:
-            self.draw_box(bbox, edge_color=color, alpha=0.75)
+            self.draw_box(bbox, edge_color=color, alpha=1)
 
         if 'Mark' in anno_mode:
             has_valid_segment = True
@@ -1177,7 +1177,7 @@ class Visualizer:
             self._draw_number_in_mask(binary_mask, text, lighter_color, label_mode)
         return self.output
 
-    def draw_soft_mask(self, soft_mask, color=None, *, text=None, alpha=0.5):
+    def draw_soft_mask(self, soft_mask, color=None, *, text=None, alpha=1):
         """
         Args:
             soft_mask (ndarray): float array of shape (H, W), each value in [0, 1].
@@ -1205,7 +1205,7 @@ class Visualizer:
             self._draw_text_in_mask(binary_mask, text, lighter_color)
         return self.output
 
-    def draw_polygon(self, segment, color, edge_color=None, alpha=0.5):
+    def draw_polygon(self, segment, color, edge_color=None, alpha=1):
         """
         Args:
             segment: numpy array of shape Nx2, containing all the points in the polygon.
@@ -1221,10 +1221,11 @@ class Visualizer:
         """
         if edge_color is None:
             # make edge color darker than the polygon color
-            if alpha > 0.8:
+            if alpha > 1:
                 edge_color = self._change_color_brightness(color, brightness_factor=-0.7)
             else:
                 edge_color = color
+        edge_color = tuple(min(c, 1) for c in color)
         edge_color = mplc.to_rgb(edge_color) + (1,)
 
         polygon = mpl.patches.Polygon(

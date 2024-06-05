@@ -7,9 +7,20 @@ Usage:
     python client.py "http://<server_ip>:6092"
 """
 
+import io
 import fire
 from gradio_client import Client
 from loguru import logger
+
+import base64
+from PIL import Image
+
+# Function to convert PIL.Image to base64 string
+def image_to_base64_str(img: Image.Image) -> str:
+    buffered = io.BytesIO()
+    img.save(buffered, format="PNG")
+    img_str = base64.b64encode(buffered.getvalue()).decode("utf-8")
+    return f"data:image/png;base64,{img_str}"
 
 def predict(server_url: str):
     """
@@ -18,10 +29,14 @@ def predict(server_url: str):
     Args:
         server_url (str): The URL of the SoM Gradio server.
     """
+    image_path = "/Users/abrichr/Desktop/calculator.png"
+    image = Image.open(image_path)
     client = Client(server_url)
     result = client.predict(
         {
-            "background": "https://raw.githubusercontent.com/gradio-app/gradio/main/test/test_files/bus.png",
+            #"background": "https://raw.githubusercontent.com/gradio-app/gradio/main/test/test_files/bus.png",
+            #"background": "/Users/abrichr/Desktop/calculator.png",
+            "background": image_to_base64_str(image),
         },           # filepath in 'parameter_1' Image component
         2.5,         # float (numeric value between 1 and 3) in 'Granularity' Slider component
         "Automatic", # Literal['Automatic', 'Interactive'] in 'Segmentation Mode' Radio component
