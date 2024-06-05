@@ -45,6 +45,8 @@ def inference_sam_m2m_auto(model, image, text_size, label_mode='1', alpha=0.1, a
     mask_map = np.zeros(image_ori.shape, dtype=np.uint8)    
     for i, ann in enumerate(sorted_anns):
         mask = ann['segmentation']
+        print(f"{type(mask)=}")
+        print(f"{mask.dtype=} {mask.shape=} {mask.min()=} {mask.max()=}")
         color_mask = np.random.random((1, 3)).tolist()[0]
         # color_mask = [int(c*255) for c in color_mask]
         demo = visual.draw_binary_mask_with_number(mask, text=str(label), label_mode=label_mode, alpha=alpha, anno_mode=anno_mode)
