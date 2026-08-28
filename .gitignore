@@ -164,3 +164,21 @@ cython_debug/
 # Never-publish workspace material (strategy, prospect research, counsel packs,
 # personal contact details). Created ad hoc; must never reach a remote.
 .private/
+
+# Credential material. deploy.py writes an EC2 private key next to the source
+# tree, and the IAM console hands out access keys as a CSV download, so both
+# land here as untracked files that a wildcard `git add` would happily stage.
+*.pem
+*.key
+*.p12
+*.pfx
+*.ppk
+id_rsa
+id_rsa.pub
+*accessKeys*.csv
+*credentials*.csv
+.aws/
+
+# macOS / stale local environments
+.DS_Store
+venv.old/
